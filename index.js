@@ -1,253 +1,200 @@
-const playerOptions = document.querySelectorAll('[data-choice]');
-const playAgainBtn = document.querySelector('.btn-play-again');
-const rulesBtn = document.querySelector('.btn-rules');
-const closeBtn = document.querySelector('.close');
+//Elements
+const playerGestures = document.querySelectorAll('.paper, .rock, .scissors');
 const resultText = document.querySelector('.result');
+const triangleElement = document.querySelectorAll('.triangle-js');
+const waitingGesture = document.querySelector('.waiting-choice');
+const btnPlayAgain = document.querySelector('.btn-play-again');
+const housePickText = document.querySelector('.house-pick-text');
+const playerText = document.querySelector('.your-pick-text');
 
-/* Get the name of the clicked choice*/
-let playerChoice = '';
-let houseChoice = '';
-let score= 0;
+// Game State
+let playerGesture = undefined;
+let houseGesture = undefined;
+let score = 0;
 
-// Load the score from localStorage on page load
-window.addEventListener('load', () => {
-    score = parseInt(localStorage.getItem('score') || '0', 10);
-    updateScoreDisplay();
-    showRules();
+//Constant for class names
+const GESTURES = ['rock', 'paper', 'scissors'];
+
+window.addEventListener('load', ()=> {
+    score = parseInt(localStorage.getItem('score') || 0);
+    updateScore(score);
 });
 
-function showRules(){
-    const displayRules = document.querySelector('.rules-page');
-    const isNone = displayRules.style.display === 'none';
-
-    isNone ? displayRules.style.display = ' grid' : displayRules.style.display = 'none';
-}
-
-rulesBtn.addEventListener('click', showRules);
-closeBtn.addEventListener('click', showRules);
-
-playerOptions.forEach( (option) => {
-    option.addEventListener('click', (event) => {
+playerGestures.forEach( (gesture) => {
+    gesture.addEventListener('click', (event)=> {
         event.preventDefault();
-
-        playerChoice = event.target.dataset.choice;
-        hideUnselectedElements();
-        selectedElement();
-        showGuideText();
-        randomisingHouseChoice();
-    });
+        const className = gesture.classList;      
+        playerGesture = getPickedGesture(className);
+        hideUnselectedItems();
+        showSelectedItem();
+        showPickText();
+        setTimeout( ()=>{
+            randomPick();
+            showResults();
+        }, 3000);
+    });   
 });
 
-function hideUnselectedElements(){
-    playerOptions.forEach( (option) => {
-        if(!option.classList.contains(`${playerChoice}`)){
-            option.classList.add('none');
-        };
+function hideUnselectedItems(){
+    playerGestures.forEach( (gesture) => {
+        if(!gesture.classList.contains(playerGesture)){
+            gesture.classList.add('none');
+        }
     });
 
-    document.querySelector('.small-triangle').classList.add('none');
-    document.querySelector('.big-triangle').classList.add('none');
-};
-
-function putShadowOnPlayerWinner(){
-    playerOptions.forEach( (option) => {
-        if(option.classList.contains('player-pick')){
-            option.classList.add('winner');
-        };
-    });
-};
-
-function putShadowOnHouseWinner(){
-    playerOptions.forEach( (option) => {
-        if(option.classList.contains('house-pick')){
-            option.classList.add('winner');
-        };
-    });
-};
-
-function removeShadowOnPlayerWinner(){
-    playerOptions.forEach( (option) => {
-        if(option.classList.contains('player-pick')){
-            option.classList.remove('winner');
-        };
-    });
-};
-
-function removeShadowOnHouseWinner(){
-    playerOptions.forEach( (option) => {
-        if(option.classList.contains('house-pick')){
-            option.classList.remove('winner');
-        };
-    });
-};
-
-function selectedElement() {
-    playerOptions.forEach( (option) => {
-        if(option.classList.contains(`${playerChoice}`)){
-            option.classList.add('player-pick');
-        };
-    });
-};
-
-function showGuideText() {
-    document.querySelector('.your-pick-text').classList.remove('none');
-    document.querySelector('.house-pick-text').classList.remove('none');
-    document.querySelector('.waiting-choice').classList.remove('none');
+    triangleElement.forEach((triangle)=>triangle.classList.add('none'));
+    waitingGesture.classList.remove('none');
 }
 
-function hideGuideText(){
-    document.querySelector('.your-pick-text').classList.add('none');
-    document.querySelector('.house-pick-text').classList.add('none');
-    document.querySelector('.waiting-choice').classList.add('none');
+
+function showSelectedItem(){
+    playerGestures.forEach( (gesture)=> {
+         if(gesture.classList.contains(playerGesture)) gesture.classList.add('player-pick');
+    });
 }
 
-function randomisingHouseChoice(){
-    const randomNumber = Math.random().toFixed(2);
+function showResults(){
+    gameDecider();
+    movePlayerAndHousePicks();
 
-    /* 
-    rock = 0-0.33
-    paper = 0.34 - 0.66
-    scissors = 0.67 - 1
-    */
+    setTimeout( ()=> {
+        showResultText();
+    }, 1000);
+}
 
-    if(randomNumber <= 0.33){
-        houseChoice = 'rock';
-    } else if( randomNumber > 0.33 && randomNumber <= 0.66) {
-        houseChoice = 'scissors';
-    } else if(randomNumber > 0.66) {
-        houseChoice = 'paper';
+function showResultText(){
+    resultText.classList.remove('none');
+    btnPlayAgain.classList.remove('none');
+}
+
+function showPickText(){
+    housePickText.classList.remove('none');
+    playerText.classList.remove('none');
+}
+
+function getPickedGesture(classList){
+    if(classList && classList.contains('rock') ) return 'rock';
+    if(classList && classList.contains('paper') ) return 'paper';
+    if(classList && classList.contains('scissors') ) return 'scissors';
+}
+
+function randomPick(){
+    const randomNumber = Math.floor(Math.random() * 3);
+    houseGesturePick(randomNumber);
+}
+
+function houseGesturePick(randomNumber){
+    houseGesture = GESTURES[randomNumber];
+    showHouseGesture();
+}
+
+function showHouseGesture(){
+    waitingGesture.classList.add('none');
+    playerGestures.forEach((gesture) => {
+        if(gesture.classList.contains(houseGesture)){            
+            if(gesture.classList.contains(playerGesture)){
+                const mainContainer = document.querySelector('.main-content');
+                gesture.classList.remove('none');
+
+                const clonedGesture = gesture.cloneNode(true);
+                mainContainer.appendChild(clonedGesture);
+
+                if(isDesktopSize()){
+                    clonedGesture.style.left = '70%';
+                    clonedGesture.style.width = '150px';
+                    clonedGesture.style.height = '150px';
+                }
+
+                btnPlayAgain.addEventListener('click', ()=> {
+                    if(clonedGesture){
+                        mainContainer.removeChild(clonedGesture);
+                    }
+                });
+
+                clonedGesture.classList.add('house-pick');
+            } else {
+                gesture.classList.remove('none');
+                gesture.classList.add('house-pick');
+            }
+        }
+    });
+}
+
+function gameDecider() {
+    const outcomes = {
+      rock: { rock: 'Draw', paper: 'You Lose', scissors: 'You Win' },
+      paper: { rock: 'You Win', paper: 'Draw', scissors: 'You Lose' },
+      scissors: { rock: 'You Lose', paper: 'You Win', scissors: 'Draw' }
     };
+  
+    resultText.innerText = outcomes[playerGesture][houseGesture];
 
-    setTimeout( () => {
-        showHouseChoice();
-        setTimeout( ()=> {
-            gameDecider();
-        }, 1000);
-    }, 3000);
-};
-
-function showHouseChoice(){
-    document.querySelector('.waiting-choice').classList.add('none');
-
-    playerOptions.forEach((option) => {
-            if(option.classList.contains(houseChoice)){
-                if(option.classList.contains('none')){
-                    option.classList.remove('none');
-                    option.classList.add('house-pick');
-                } else {
-                    option.classList.add('house-pick');
-                };
-            };
-    });
-};
-
-function isDesktopSize() {
-    return window.matchMedia("(min-width: 768px)").matches;
-}
-
-function movePlayerAndHousePicks() {
-    if (isDesktopSize()) {
-        playerOptions.forEach((option) => {
-            if (option.classList.contains('house-pick')) {
-                option.style.left = '60%';
-                document.querySelector('.house-pick-text').style.right = '29%';
+    if(resultText.innerText === 'You Win') {
+        addScore(1);
+        playerGestures.forEach((gesture)=> {
+            if(gesture.classList.contains('player-pick')){
+                gesture.classList.add('winner');
             }
-            if (option.classList.contains('player-pick')) {
-                option.style.left = '25%';
-                document.querySelector('.your-pick-text').style.left = '29%';
+        })
+    }
+
+    if(resultText.innerText === 'You Lose') {
+        playerGestures.forEach((gesture)=> {
+            if(gesture.classList.contains('house-pick')){
+                gesture.classList.add('winner');
             }
-        });
+        })
     }
 }
 
-function gameDecider() {    
-    playAgainBtn.classList.remove('none');
-    resultText.classList.remove('none');
-
-    movePlayerAndHousePicks();
-
-    if(playerChoice === 'rock'){
-        switch(houseChoice){
-            case 'rock':
-                resultText.innerText = 'Draw';
-                break;
-            case 'paper':
-                resultText.innerText = 'You Lose';
-                playAgainBtn.style.color = 'red';
-                putShadowOnHouseWinner();
-                break;
-            case 'scissors':
-                resultText.innerText = 'You Win';
-                putShadowOnPlayerWinner();
-                addScore(1);
-                break;
-        }
-    }else if(playerChoice === 'paper'){
-        switch(houseChoice){
-            case 'rock':
-                resultText.innerText = 'You Win';
-                putShadowOnPlayerWinner();
-                addScore(1);
-                break;
-            case 'paper':
-                resultText.innerText = 'Draw';
-                break;
-            case 'scissors':
-                resultText.innerText = 'You Lose';
-                playAgainBtn.style.color = 'red';
-                putShadowOnHouseWinner();
-                break;
-        }
-    }else if(playerChoice === 'scissors'){
-        switch(houseChoice){
-            case 'rock':
-                resultText.innerText = 'You Lose';
-                playAgainBtn.style.color = 'red';
-                putShadowOnHouseWinner();
-                break;
-            case 'paper':
-                resultText.innerText = 'You Win';
-                putShadowOnPlayerWinner();
-                addScore(1);
-                break;
-            case 'scissors':
-                resultText.innerText = 'Draw';
-                break;
-        }
-    };
-};
-
-function playAgain(){
-    playerOptions.forEach( (option) => {
-        option.classList.remove('none');
-        if(option.classList.contains('house-pick')){
-            removeShadowOnHouseWinner();
-            option.classList.remove('house-pick');
-        }
-
-        if(option.classList.contains('player-pick')){
-            removeShadowOnPlayerWinner();
-            option.classList.remove('player-pick');
-        }
-    });
-
-    document.querySelector('.result').classList.add('none');
-    document.querySelector('.big-triangle').classList.remove('none');
-    document.querySelector('.small-triangle').classList.remove('none');
-    playAgainBtn.classList.add('none');
-
-    hideGuideText();    
-};
-
-function addScore(scoreChange) {
-    score += scoreChange;
+function addScore(scoreUpdate){
+    score += scoreUpdate;
     localStorage.setItem('score', score);
-    updateScoreDisplay();
-};
+    updateScore(score);
+}
 
-function updateScoreDisplay(){
-    const scoreElement = document.querySelector('.score-num');
-    scoreElement.innerText = score;   
-};
+function updateScore(score){
+    const scoreDisplay = document.querySelector('.score-num');
+    scoreDisplay.innerText = score;
+}
+  
+function isDesktopSize(){
+    return window.matchMedia("(min-width: 768px)").matches;
+}
 
-playAgainBtn.addEventListener('click', playAgain);
+function movePlayerAndHousePicks(){
+    if(isDesktopSize()){
+        playerGestures.forEach((gesture)=> {
+            if(playerGesture != houseGesture){
+                if(gesture.classList.contains('house-pick')){
+                    gesture.style.left = '70%';
+                    gesture.style.width = '150px';
+                    gesture.style.height= '150px';
+                }
+            }
+
+            if (gesture.classList.contains('player-pick')) {
+                gesture.style.left = '0%';
+                gesture.style.width = '150px';
+                gesture.style.height= '150px';
+            }
+        });
+
+        housePickText.style.left= '72%';
+        housePickText.style.fontSize = '12px';
+        playerText.style.left = '5%';
+        playerText.style.fontSize = '12px';
+    }
+}
+
+btnPlayAgain.addEventListener('click', ()=> {
+    window.location.reload();
+});
+
+function showAndHideRules(){
+    const rulesPages = document.querySelector('.rules-page');
+    rulesPages.classList.contains('none') ? rulesPages.classList.remove('none'): rulesPages.classList.add('none');
+}
+
+document.querySelector('.btn-rules').addEventListener('click',showAndHideRules);
+document.querySelector('.close').addEventListener('click', showAndHideRules);

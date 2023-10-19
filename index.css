@@ -3,11 +3,11 @@
 :root{
     /*Primary*/
 
-    --scissors-gradient: hsl(39, 89%, 49%);
-    --paper-gradient:hsl(230, 89%, 62%);
-    --rock-gradient:hsl(349, 71%, 52%);
+    --scissors-gradient: hsl(40, 84%, 53%);
+    --paper-gradient:hsl(230, 89%, 65%);
+    --rock-gradient:hsl(349, 70%, 56%);
     --lizard-gradient: linear-gradient(to bottom, hsl(261, 73%, 60%),hsl(261, 72%, 63%));
-    --cyan: linear-gradient(to bottom, hsl(189, 59%, 53%),hsl(189, 58%, 57%));
+    --cyan: hsl(189, 59%, 53%);
     
     /*Neutral*/
 
@@ -27,307 +27,320 @@
 }
 body{
     font-family: 'Barlow Semi Condensed', sans-serif;
-}
-.wrapper{
-    background:var(--radial-gradient);
     height: 100vh;
-    display: flex;
-    flex-direction: column;
+    overflow: hidden;
 }
+/* Adjustments for the small screen*/
+.wrapper{
+    height: 100vh;
+    width: 100%;
+    position: relative;
+    background: var(--radial-gradient);
+    display: grid;
+    justify-content: center;
+    grid-template-rows: .5fr 4fr 1fr ;
+}
+
 .heading{
-    margin: 2rem;
+    margin: 2rem auto;
+    width: calc(375px - 4rem);
     border: 3px solid var(--header-outline);
+    border-radius: .25rem;
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: .75rem 0;
-    border-radius: .35rem;
 }
-
-.heading .text-left{
-    margin: 0 .75rem;
+.text-left{
+    margin: 0 1rem;
+    color: white;
+}
+.text-left p {
     text-transform: uppercase;
     line-height: .85rem;
     font-weight: 700;
-    color: white;
     letter-spacing: 1px;
 }
-.heading .scoreboard{
+.scoreboard{
+    margin: .5rem;
     background-color: white;
-    height: 65px;
-    width: 70px;
-    margin: 0 .75rem;
+    padding: .15rem 1.5rem 0.75rem 1.5rem;
     border-radius: .25rem;
     display: flex;
     flex-direction: column;
-    align-items: center;
-}
-.score-title{
-    text-transform: uppercase;
-    font-size: 10px;
-    margin-top: .25rem;
-    color: var(--score-text);
-    letter-spacing: 1px;
-}
-.score-num{
-    font-weight: 700;
-    color: var(--dark-text);
-    font-size: 35px;
-}
-.main-content{
-    display: flex;
-    align-items: center;
-    flex-direction: column;
+    text-align: center;
 }
 
-.rock, .paper, .scissors, .house-pick{
+.score-title{
+    color: var(--score-text);
+    text-transform: uppercase;
+    font-size: 10px;
+    letter-spacing: 1px;
+}
+
+.score-num{
+    font-size: 30px;
+    font-weight: 700;
+    color: var(--dark-text);
+}
+
+.small-triangle{
+    margin: 3rem auto;
+}
+.main-content{
+    position: relative;
+}
+.rock, .paper, .scissors{
     position: absolute;
+    width: 100px;
+    height: 100px;
+    background-color: white;
     display: flex;
     align-items: center;
     justify-content: center;
-    background-color: white;
     border-radius: 50%;
-    box-shadow: inset 0 5px 1px 1px lightgray;
     cursor: pointer;
 }
-
 .rock{
     border: 10px solid var(--rock-gradient);
-    padding: 1rem;
-    top:43%;
-    left: 36%;
+    box-shadow: 0 4px 1px 1px hsl(349, 74%, 41%),
+        inset 0 5px 1px -1px lightgray;
+
+    top: 45%;
+    left: 32.5%;
+}
+.rock svg, .paper svg, .scissors svg{
+    transform: scale(0.7);
 }
 .paper{
-    border:10px solid var(--paper-gradient);
-    padding: 0.75rem 1rem;
-    left: 10%;
+    border: 10px solid var(--paper-gradient);
+    box-shadow: 0 4px 1px 1px hsl(230, 62%, 52%),
+        inset 0 5px 1px -1px lightgray;
+    top: 12%;
+    left: 5%;
 }
-.scissors, .house-pick {
-    border: 10px solid var(--scissors-gradient);
-    padding: .75rem .8rem;
-    left: 60%;
-}
-
-.house-pick {
-    border: 10px solid var(--scissors-gradient);
-    width: 100px;
-    height: 100px;
-    top: 30%;
-    left: 60%;
-}
-
-.player-pick{
-    border:10px solid var(--rock-gradient);
-    width: 100px;
-    height: 100px;
-    top: 30%;
-    left: 10%;
-}
-
-.your-pick-text, .house-pick-text{
-    position: absolute;
-    color: white;
-    text-transform: uppercase;
-    font-size: 11.5px;
-    letter-spacing: 2px;
-    font-weight: 700;
-}
-.your-pick-text{
-    top: 48%;
-    left: 13%;
-}
-
-.house-pick-text{
-    top: 48%;
-    right: 12%;
-}
-
 .waiting-choice{
     position: absolute;
-    background-image: var(--radial-gradient);
-    border-radius: 50%;
+    background:var(--radial-gradient);
     width: 100px;
     height: 100px;
+    top: 12%;
+    right: 7%;
+    border-radius: 50%;
+}
+.scissors{
+    border: 10px solid var(--scissors-gradient);
+    box-shadow: 0 4px 1px 1px hsl(39, 87%, 44%),
+        inset 0 5px 1px -1px lightgray;
+    top: 12%;
     left: 60%;
-    top: 30%;
 }
-
-.winner{
-    box-shadow: 0 0 2px 15px hsl(214, 26%, 31%),
-    0 0 2px 40px hsl(214, 39%, 24%),
-    0 0 2px 65px hsl(215, 43%, 22%);;
-}
-
-.none{
-    display: none;
-}
-.rules-page{
-    z-index: 1;
-    height: 100vh;
-    width: 100%;
-    display: grid;
-    place-items: center;
-    background-color: white;
+.your-pick-text, .house-pick-text{
     position: absolute;
-}
-.rules-header{
-    font-size: 30px;
-    position: absolute;
-    top: 8%;
+    top: 43%;
+    color: white;
     text-transform: uppercase;
-    letter-spacing: 1px;
+    letter-spacing: 2px;
     font-weight: 700;
-    color: var(--dark-text);
+    font-size: 12px;
 }
-.btn-rules, .btn-play-again{
+.your-pick-text{
+    left: 8%;
+}
+.house-pick-text{
+    left: 58%;
+}
+.btn-rules{
+    position: absolute;
+    padding: .5rem 1.6rem;
+    bottom: 10%;
+    left: 36%;
     background-color: transparent;
     border: 2px solid var(--header-outline);
-    width: fit-content;
+    border-radius: .25rem;
     color: white;
     text-transform: uppercase;
     font-weight: 700;
     letter-spacing: 2px;
-    padding: .5rem 1rem;
-    border-radius: .5rem;
     cursor: pointer;
-    position: absolute;
-    bottom: 10%;
-    left: 38%;
+    text-align: center;
 }
-.btn-play-again{
+.rules-page{
+    position: absolute;
     background-color: white;
-    color:var(--dark-text);
-    bottom: 30%;
-    border: none;
-    border-radius: .25rem;
-    left: 20%;
-    width: 60%;
+    height: 100vh;
+    width: 100%;
+    z-index: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+.rules-header{
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    font-weight: 700;
+    position: absolute;
+    top: 8%;
+    font-size: 25px;
+}
+.close{
+    cursor: pointer;
+}
+.rules-page svg{
+    margin: auto;
 }
 .result{
-    position: absolute;
-    bottom: 37%;
-    left: 35%;
     text-transform: uppercase;
-    letter-spacing: 2px;
     font-size: 30px;
+    position: absolute;
+    top: 55%;
+    left: 35%;
     color: white;
     font-weight: 700;
 }
-
+.btn-play-again{
+    padding: .5rem 3rem;
+    position: absolute;
+    background-color: white;
+    border-radius: .25rem;
+    border: none;
+    top: 65%;
+    left: 23%;
+    color: var(--dark-text);
+    text-transform: uppercase;
+    font-weight: 700;
+    letter-spacing: 2px;
+    text-align: center;
+}
 .big-triangle{
     display: none;
 }
-
-/* This is now for the big screen*/
-
+.none{
+    display: none;
+}
+/* these are javascript called classes*/
+.player-pick{
+    border: 10px solid var(--rock-gradient);
+    box-shadow: 0 4px 1px 1px hsl(349, 74%, 41%),
+        inset 0 5px 1px -1px lightgray;
+    top: 12%;
+    left: 5%;
+}
+.house-pick{
+    border: 10px solid var(--scissors-gradient);
+    box-shadow: 0 4px 1px 1px hsl(39, 87%, 44%),
+        inset 0 5px 1px -1px lightgray;
+    top: 12%;
+    left: 60%;
+}
+.winner{
+    box-shadow: 0 0 1px 15px hsl(214, 47%, 23%),
+                0 0 1px 30px hsl(214, 48%, 20%),
+                0 0 1px 50px hsl(212, 48%, 17%);
+}
+/*Adjustment for the big screen*/
 @media (min-width:1024px) {
-    .wrapper{
-        align-items: center;
-    }
     .small-triangle{
         display: none;
     }
     .big-triangle{
         display: block;
-        position: absolute;
-        top: 40%;
+        margin: 8rem auto;
     }
     .heading{
-        width: 40%;
+        width: 500px;
     }
-    .text-left{
-        font-size: 25px;
+    .rock, .paper, .scissors{
+        width: 180px;
+        height: 180px;
+        border-width: 20px;
     }
-    .text-left p{
-        margin: .5rem 0;
-    }
-    .rock, .paper, .scissors, .waiting-choice{
-        width: 130px;
-        height: 130px;
-    }
-    .paper{
-        border-width: 15px;
-        top: 32%;
-        left: 35%;
-    }
-    .scissors{
-        border-width: 15px;
-        left: 55%;
-        top: 32%;
+    .rock svg, .paper svg, .scissors svg{
+        transform: scale(1);
     }
     .rock{
-        border-width: 15px;
-        left: 45%;
-        top: 65%;
+        top: 50%;
+        left: 31.5%;
     }
-    .player-pick{
-        border-width: 25px;
-        width: 200px;
-        height: 200px;
-        top: 32%;
-        left: 30%;
-    }
-    .house-pick{
-        border-width: 25px;
-        width: 200px;
-        height: 200px;
-        left: 55%;
+    .your-pick-text, .house-pick-text{
+        font-size: 16px;
     }
     .your-pick-text{
-        font-size: 15px;
-        top: 25%;
-        left: 34%;
+        top: 2%;
+        left: 13%;
     }
     .house-pick-text{
-        font-size: 15px;
-        top: 25%;
-        right: 33%;
-    }
-    .waiting-choice{
-        left: 55%;
-        top: 32%;
-        width: 200px;
-        height: 200px;
+        top: 2%;
+        left: 60%;
     }
     .btn-rules{
-        left: 90%;
+        left: 80%;
     }
     .rules-page{
-        width: 30%;
-        height: 60vh;
         border-radius: .5rem;
+        position: absolute;
         top: 15%;
+        left: 35%;
+        height: 60vh;
+        width: 30%;
     }
     .rules-header{
-        top: 8%;
-        left: 5%;
+        left: 15%;
+    }
+    .none{
+        display: none;
     }
     .close{
         position: absolute;
+        right:10%;
         top: 10%;
+    }
+    .waiting-choice{
+        position: absolute;
+        background:var(--radial-gradient);
+        width: 150px;
+        height: 150px;
+        top: 15%;
         right: 10%;
+        border-radius: 50%;
     }
     .result{
-        font-size: 25px;
         top: 40%;
-        left: 45%;
+        left: 46%;
     }
     .btn-play-again{
-        width: 10%;
-        height: 5%;
+        padding: .5rem 2rem;
+        position: absolute;
+        background-color: white;
+        border-radius: .25rem;
+        border: none;
+        top: 48%;
         left: 44%;
-        top: 47%;
-        font-size: 10px;
+        color: var(--dark-text);
+        text-transform: uppercase;
+        font-weight: 700;
+        letter-spacing: 2px;
+        text-align: center;
+    }
+    .player-pick{
+        border: 20px solid var(--rock-gradient);
+        box-shadow: 0 4px 1px 1px hsl(349, 74%, 41%),
+            inset 0 5px 1px -1px lightgray;
+        top: 12%;
+        left: 5%;
+    }
+    .house-pick{
+        border: 20px solid var(--scissors-gradient);
+        box-shadow: 0 4px 1px 1px hsl(39, 87%, 44%),
+            inset 0 5px 1px -1px lightgray;
+        top: 12%;
+        left: 60%;
+    }
+    .winner{
+        box-shadow: 0 0 1px 15px hsl(214, 47%, 23%),
+                    0 0 1px 30px hsl(214, 48%, 20%),
+                    0 0 1px 50px hsl(212, 48%, 17%);
     }
 }
-
-
-
-
-
-
-
-
 
 
 
